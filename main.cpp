@@ -11,6 +11,7 @@ void Rots();
 void Setup();
 void ProjDs();
 vector<vector<double>> MultMatrixs(vector<vector<double>> mat1, vector<vector<double>> mat2);
+vector<vector<double>> SubMatrixs(vector<vector<double>> mat1, vector<vector<double>> mat2);
 
 SDL_Window *window;
 SDL_GLContext glContext;
@@ -26,12 +27,21 @@ double ang = 0;
 double dist = 2;
 double w;
 double xang = .47;
-double yang = 1.84;
+double yang = .9;
 double zang = 0;
 double wang = 0;
 double per = 1;
+double cx = 0;
+double cy = 0;
+double cz = 3;
+double ax = 0;
+double ay = 0;
+double az = 0;
 
 vector<vector<double>> points;
+vector<vector<double>> cameraPosition;
+vector<vector<double>> cameraOrientation;
+vector<vector<double>> display;
 vector<vector<double>> rotx;
 vector<vector<double>> roty;
 vector<vector<double>> rotz;
@@ -39,6 +49,9 @@ vector<vector<double>> rotxy;
 vector<vector<double>> rotzw;
 vector<vector<double>> rotxz;
 vector<vector<double>> rotxw;
+vector<vector<double>> camrotx;
+vector<vector<double>> camroty;
+vector<vector<double>> camrotz;
 vector<vector<double>> projection2D;
 vector<vector<double>> projection3D;
 
@@ -124,6 +137,9 @@ void Run()
     
     Setup();
     Rots();
+    display.push_back({0});
+    display.push_back({0});
+    display.push_back({1.5});
 
     while (gameLoop)
     {   
@@ -227,12 +243,11 @@ void Draw(){
         rotated = MultMatrixs(roty, xyzs);
         rotated = MultMatrixs(rotx, rotated);
         rotated = MultMatrixs(rotz, rotated);
-        vector<vector<double>> xys = MultMatrixs(projection2D, rotated);
-
-        for(int j = 0; j < xys.size(); j++){
-            temp.push_back(xys[j][0]);
-        }
-        pps.push_back(temp);
+        vector<vector<double>> diffpc = SubMatrixs(rotated, cameraPosition);
+        vector<vector<double>> transform = MultMatrixs(diffpc, camrotx);
+        transform = MultMatrixs(camroty, transform);
+        transform = MultMatrixs(camrotz, transform);
+        pps.push_back({(display[2][0] / transform[2][0]) * transform[0][0] + display[0][0], (display[2][0] / transform[2][0]) * transform[1][0] + display[1][0]});
 
         pos.x = pps[i][0] * 100 + screenWidth / 2;
         pos.y = pps[i][1] * 100 + screenHeight / 2;
@@ -325,6 +340,22 @@ vector<vector<double>> MultMatrixs(vector<vector<double>> mat1, vector<vector<do
     return result;
 }
 
+vector<vector<double>> SubMatrixs(vector<vector<double>> mat1, vector<vector<double>> mat2){
+    vector<vector<double>> result;
+    vector<double> temp;
+    double a = 0;
+    for(int j = 0; j < mat1.size(); j++){
+        for(int k = 0; k < mat1[j].size(); k++){
+            a = mat1[j][k] - mat2[j][k];
+            temp.push_back(a);
+            a = 0;
+        }
+        result.push_back(temp);
+        temp.clear();
+    }
+    return result;
+}
+
 void Setup(){
     points.push_back({-1, -1, -1, 1});
     points.push_back({1, -1, -1, 1});
@@ -365,6 +396,28 @@ void Rots(){
     rotzw.clear();
     rotxz.clear();
     rotxw.clear();
+    camrotx.clear();
+    camroty.clear();
+    camrotz.clear();
+    cameraPosition.clear();
+    cameraOrientation.clear();
+
+    cameraPosition.push_back({cx});
+    cameraPosition.push_back({cy});
+    cameraPosition.push_back({cz});
+    cameraOrientation.push_back({ax, ay, az});
+
+    camrotx.push_back({1, 0, 0});
+    camrotx.push_back({0, cos(cameraOrientation[0][0]), sin(cameraOrientation[0][0])});
+    camrotx.push_back({0, -1*sin(cameraOrientation[0][0]), cos(cameraOrientation[0][0])});
+
+    camroty.push_back({cos(cameraOrientation[0][1]), 0, -1*sin(cameraOrientation[0][1])});
+    camroty.push_back({0, 1, 0});
+    camroty.push_back({sin(cameraOrientation[0][1]), 0, cos(cameraOrientation[0][1])});
+
+    camrotz.push_back({cos(cameraOrientation[0][2]), sin(cameraOrientation[0][2]), 0});
+    camrotz.push_back({-1*sin(cameraOrientation[0][2]), cos(cameraOrientation[0][2]), 0});
+    camrotz.push_back({0, 0, 1});
 
     rotx.push_back({1, 0, 0});
     rotx.push_back({0, cos(xang), -1*sin(xang)});
