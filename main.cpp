@@ -273,10 +273,10 @@ void Draw(){
 }
 
 void Connect(int offset, int i, int j, vector<vector<double>> pps){
-    int ix = pps[i + offset][0] * 200 + screenWidth / 2;
-    int iy = pps[i + offset][1] * 200 + screenHeight / 2;
-    int jx = pps[j + offset][0] * 200 + screenWidth / 2;
-    int jy = pps[j + offset][1] * 200 + screenHeight / 2;
+    int ix = pps[i + offset][0] * 100 + screenWidth / 2;
+    int iy = pps[i + offset][1] * 100 + screenHeight / 2;
+    int jx = pps[j + offset][0] * 100 + screenWidth / 2;
+    int jy = pps[j + offset][1] * 100 + screenHeight / 2;
     double ang = atan2((jy - iy), (jx - ix));
     double cx = cos(ang);
     double cy = sin(ang);
