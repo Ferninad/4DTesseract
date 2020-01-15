@@ -21,7 +21,7 @@ SDL_Rect pos;
 
 int screenWidth = 500;
 int screenHeight = 500;
-int cornerSize = 3;
+int cornerSize = 1;
 int lineSize = 1;
 double ang = 0;
 double dist = 2;
@@ -253,6 +253,7 @@ void Draw(){
         pos.y = pps[i][1] * 100 + screenHeight / 2;
         pos.w = cornerSize;
         pos.h = cornerSize;
+        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderFillRect(renderer, &pos);
     }
     
@@ -277,23 +278,8 @@ void Connect(int offset, int i, int j, vector<vector<double>> pps){
     int iy = pps[i + offset][1] * 100 + screenHeight / 2;
     int jx = pps[j + offset][0] * 100 + screenWidth / 2;
     int jy = pps[j + offset][1] * 100 + screenHeight / 2;
-    double ang = atan2((jy - iy), (jx - ix));
-    double cx = cos(ang);
-    double cy = sin(ang);
-    double x = static_cast<double>(ix);
-    double y = static_cast<double>(iy);
-    while(static_cast<int>(x) != jx || static_cast<int>(y) != jy){
-        if(static_cast<int>(x) != jx)
-            x += cx;
-        if(static_cast<int>(y) != jy)
-            y += cy;
-        pos.x = static_cast<int>(x);
-        pos.y = static_cast<int>(y);
-        pos.w = lineSize;
-        pos.h = lineSize;
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderFillRect(renderer, &pos);
-    }
+
+    SDL_RenderDrawLine(renderer, ix, iy, jx, jy);
 }
 
 vector<vector<double>> MultMatrixs(vector<vector<double>> mat1, vector<vector<double>> mat2){
