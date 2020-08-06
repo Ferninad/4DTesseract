@@ -6,12 +6,12 @@ bool Init();
 void CleanUp();
 void Run();
 void Draw();
-void Connect(int offSet, int i, int j, vector<vector<double>> pps);
+void Connect(int offSet, int i, int j, vector<vector<double>> &pps);
 void Rots();
 void Setup();
 void ProjDs();
-vector<vector<double>> MultMatrixs(vector<vector<double>> mat1, vector<vector<double>> mat2);
-vector<vector<double>> SubMatrixs(vector<vector<double>> mat1, vector<vector<double>> mat2);
+vector<vector<double>> MultMatrixs(vector<vector<double>> &mat1, vector<vector<double>> &mat2);
+vector<vector<double>> SubMatrixs(vector<vector<double>> &mat1, vector<vector<double>> &mat2);
 
 SDL_Window *window;
 SDL_GLContext glContext;
@@ -143,7 +143,7 @@ void Run()
 
     while (gameLoop)
     {   
-        wang += .015;
+        wang += .001;
         if(wang > 2*M_PI)
             wang -= 2 * M_PI;
         Draw();
@@ -273,7 +273,7 @@ void Draw(){
     }
 }
 
-void Connect(int offset, int i, int j, vector<vector<double>> pps){
+void Connect(int offset, int i, int j, vector<vector<double>> &pps){
     int ix = pps[i + offset][0] * 100 + screenWidth / 2;
     int iy = pps[i + offset][1] * 100 + screenHeight / 2;
     int jx = pps[j + offset][0] * 100 + screenWidth / 2;
@@ -282,7 +282,7 @@ void Connect(int offset, int i, int j, vector<vector<double>> pps){
     SDL_RenderDrawLine(renderer, ix, iy, jx, jy);
 }
 
-vector<vector<double>> MultMatrixs(vector<vector<double>> mat1, vector<vector<double>> mat2){
+vector<vector<double>> MultMatrixs(vector<vector<double>> &mat1, vector<vector<double>> &mat2){
     vector<vector<double>> result;
     vector<double> temp;
     double a = 0;
@@ -300,7 +300,7 @@ vector<vector<double>> MultMatrixs(vector<vector<double>> mat1, vector<vector<do
     return result;
 }
 
-vector<vector<double>> SubMatrixs(vector<vector<double>> mat1, vector<vector<double>> mat2){
+vector<vector<double>> SubMatrixs(vector<vector<double>> &mat1, vector<vector<double>> &mat2){
     vector<vector<double>> result;
     vector<double> temp;
     double a = 0;
